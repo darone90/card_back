@@ -5,7 +5,7 @@ export const databaseConfig = {
     username: 'root',
     password: '',
     database: 'card',
-    entities: ['**/**.entity{.ts,.js}'],
+    entities: ['dist/**/**.entity{.ts,.js}'],
     bigNumberStrings: false,
     logging: true,
     synchronize: true,
