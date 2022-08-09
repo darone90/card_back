@@ -16,6 +16,8 @@ export class ArticleEntity extends BaseEntity {
     @Column()
     text: string;
 
-    @Column()
-    fotos: string[];
+    @Column({
+        type: 'longtext'
+    })
+    fotos: string;
 }

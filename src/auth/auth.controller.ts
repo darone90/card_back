@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseFilters, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { UserObject } from 'src/decorators/userobj.decorator';
 import { UserEntity } from 'src/user/user.entity';
@@ -18,7 +18,7 @@ export class AuthController {
         return this.authService.login(req, res)
     }
 
-    @Get('/end')
+    @Get('/out')
     async logout(
         @UserObject() user: UserEntity,
         @Res() res: Response

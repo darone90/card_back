@@ -7,7 +7,7 @@ export const databaseConfig = {
     database: 'card',
     entities: ['dist/**/**.entity{.ts,.js}'],
     bigNumberStrings: false,
-    logging: true,
+    logging: false,
     synchronize: true,
     migrations: ['dist/migration/*.js'],
 }

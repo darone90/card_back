@@ -9,3 +9,9 @@ export enum Sections {
     'welding',
     'glass'
 }
+
+export interface DecodedToken {
+    id: string;
+    iat: number;
+    exp: number;
+}

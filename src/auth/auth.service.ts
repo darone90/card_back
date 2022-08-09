@@ -4,18 +4,19 @@ import { Response } from 'express';
 import { UserEntity } from 'src/user/user.entity';
 import { v4 as uuid } from 'uuid';
 import { sign } from 'jsonwebtoken';
-import { JwtPayload } from './jwt.strategy';
 import { comparer } from 'src/utils/crypto';
 import { cryptoData } from 'cryptoConfig';
-import { UserObject } from 'src/decorators/userobj.decorator';
 
+interface JwtPayload {
+    id: string
+}
 
 @Injectable()
 export class AuthService {
 
     private createToken(currentTokneId: string): { accesToken: string, expiresIn: number } {
         const payload: JwtPayload = { id: currentTokneId };
-        const expiresIn = 60 * 60 * 24;
+        const expiresIn = 1000 * 60 * 60 * 24; ///////////////////////do config przenieść
         const accesToken = sign(payload, cryptoData.password, { expiresIn })
         return {
             accesToken,
@@ -52,17 +53,17 @@ export class AuthService {
 
             if (!user) {
                 return res.json({
-                    loggedIn: false,
-                    message: 'user not exist'
+                    actionStatus: false,
+                    message: 'użytkownik o podanej nazwie nie istnieje'
                 })
             }
 
-            const isPasswordCorrect = comparer(req.password, user.hash, user.iv, user.salt);
+            const isPasswordCorrect = await comparer(req.password, user.hash, user.iv, user.salt);
 
             if (!isPasswordCorrect) {
                 return res.json({
-                    loggedIn: false,
-                    message: 'uncorrect password'
+                    actionStatus: false,
+                    message: 'niepoprawne hasło'
                 })
             }
 
@@ -74,15 +75,15 @@ export class AuthService {
                 httpOnly: true
             })
                 .json({
-                    loggedIn: true,
-                    message: 'welcome'
+                    actionStatus: true,
+                    message: 'zalogowano'
                 })
         } catch (err) {
             res
                 .status(500)
                 .json({
-                    loggedIn: false,
-                    message: 'server error'
+                    actionStatus: false,
+                    message: 'błąd serwera'
                 })
         }
     }
@@ -95,13 +96,15 @@ export class AuthService {
             return res
                 .cookie('jwt', '')
                 .json({
-                    message: 'logout correct'
+                    actionStatus: true,
+                    message: 'wylgowoano poprawnie'
                 })
         } catch (err) {
             res
                 .status(500)
                 .json({
-                    message: 'server error'
+                    actionStatus: false,
+                    message: 'błąd serwera'
                 })
         }
     }
