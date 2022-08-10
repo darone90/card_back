@@ -9,7 +9,7 @@ export class UnauthorizedExceptionFilter implements ExceptionFilter {
 
         const outcome = {
             actionStatus: false,
-            message: 'Użytkonik nie zalogowonay'
+            message: 'Nie masz dostępu do tych zasobów'
         }
         response
             .json(outcome)

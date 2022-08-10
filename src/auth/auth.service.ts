@@ -43,7 +43,7 @@ export class AuthService {
 
 
 
-    async login(req: authLoginDto, res: Response): Promise<any> {
+    async login(req: authLoginDto, res: Response): Promise<Response> {
         try {
             const user = await UserEntity.findOne({
                 where: {

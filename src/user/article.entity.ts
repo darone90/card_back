@@ -1,5 +1,6 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Sections } from "src/types/user.type";
+import { FotoEntity } from "./foto.entity";
 
 @Entity()
 export class ArticleEntity extends BaseEntity {
@@ -16,8 +17,9 @@ export class ArticleEntity extends BaseEntity {
     @Column()
     text: string;
 
-    @Column({
-        type: 'longtext'
-    })
-    fotos: string;
+    @OneToMany(() => FotoEntity, (foto) => foto.article)
+    fotos: FotoEntity[];
+
+    @Column()
+    date: string;
 }

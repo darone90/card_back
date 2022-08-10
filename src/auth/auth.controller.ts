@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Post, Res, UseFilters, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Res, UseFilters, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { UserObject } from 'src/decorators/userobj.decorator';
+import { UnauthorizedExceptionFilter } from 'src/filter/unauthorized.filter';
+import { AuthGuard } from 'src/guard/Auth.guard';
 import { UserEntity } from 'src/user/user.entity';
 import { AuthService } from './auth.service';
 import { authLoginDto } from './dto/auth-login.dto';
@@ -18,7 +20,14 @@ export class AuthController {
         return this.authService.login(req, res)
     }
 
-    @Get('/out')
+    @Patch('/')
+    @UseGuards(AuthGuard)
+    @UseFilters(new UnauthorizedExceptionFilter())
+    async PasswordChange() {
+
+    };
+
+    @Get('/')
     async logout(
         @UserObject() user: UserEntity,
         @Res() res: Response
