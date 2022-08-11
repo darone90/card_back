@@ -1,13 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Res, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UnauthorizedExceptionFilter } from 'src/filter/unauthorized.filter';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/guard/Auth.guard';
 import { destionation } from 'src/multer/multer.storage';
 import { UserService } from './user.service';
-import { UploadeArticleMulter, UploadeFileMulter } from 'src/types/multer.type';
+import { UploadeFileMulter } from 'src/types/multer.type';
 import { SharpPipe } from 'src/pipes/image-resize.pipe';
 import { FileValidationFilter } from 'src/filter/uncorrect-data.filter';
 import { ArticleValidation } from 'src/pipes/article-validation.pipe';
+import { ArticleData } from './dto/article.dto';
+import { ArticleValidationNoFile } from 'src/pipes/article-nofile.pipe';
+
 
 @Controller('user')
 export class UserController {
@@ -31,8 +34,8 @@ export class UserController {
     )
     @UseFilters(new UnauthorizedExceptionFilter(), new FileValidationFilter())
     async addArticleToDataBase(
-        @UploadedFiles(SharpPipe) incomeFiles: UploadeFileMulter,
-        @Body(ArticleValidation) data: UploadeArticleMulter
+        @UploadedFiles(SharpPipe) incomeFiles: UploadeFileMulter | null,
+        @Body(ArticleValidation) data: ArticleData
     ) {
         return this.userService.addNewArticeToDataBase(data, incomeFiles);
     };
@@ -44,34 +47,34 @@ export class UserController {
         return await this.userService.getOneArticle(id);
     };
 
-    @Get('/getfoto/:id')
-    async sendBigFoto(
-        @Param() id: string,
-    ) {
+    @Get('/freespace')
+    @UseGuards(AuthGuard)
+    @UseFilters(new UnauthorizedExceptionFilter())
+    async getFreeSace() {
+        return await this.userService.getFreeSpace();
+    }
 
-    };
-
-    @Delete('/delete/:id')
+    @Get('/delete/:id')
     @UseGuards(AuthGuard)
     @UseFilters(new UnauthorizedExceptionFilter())
     async deleteArticel(
-        @Param() id: string,
+        @Param('id') id: string,
     ) {
         return await this.userService.deleteArticle(id);
     };
 
-    @Get('/list/:type')
+    @Get('/list')
     async getListOfArticles() {
-
+        return await this.userService.getArticleList();
     };
 
     @Get('/foto/remove/:id')
     @UseGuards(AuthGuard)
     @UseFilters(new UnauthorizedExceptionFilter())
     async removeFoto(
-        @Param() id: string,
+        @Param('id') id: string,
     ) {
-
+        return await this.userService.fotoRemove(id);
     };
 
     @Post('/foto/add')
@@ -90,15 +93,29 @@ export class UserController {
             },
         ),
     )
-    async addFotoToExistingArticle() {
-
+    async addFotoToExistingArticle(
+        @UploadedFiles(SharpPipe) incomeFiles: UploadeFileMulter | null,
+        @Body() data: { id: string },
+    ) {
+        return await this.userService.addFotoToExistingArticle(data.id, incomeFiles);
     };
 
-    @Patch('/article/patch/:id')
+    @Patch('/article/patch')
     @UseGuards(AuthGuard)
-    @UseFilters(new UnauthorizedExceptionFilter())
-    async patchExistingArticle() {
-
+    @UseFilters(new UnauthorizedExceptionFilter(), new FileValidationFilter())
+    async patchExistingArticle(
+        @Body(ArticleValidationNoFile) data: ArticleData,
+    ) {
+        return await this.userService.PatchExistingData(data);
     };
+
+    @Get('/sendfoto/:id/:type')
+    async sendFotoToClient(
+        @Param('id') id: string,
+        @Param('type') type: string,
+        @Res() res: any
+    ) {
+        return await this.userService.sendFoto(res, id, type);
+    }
 
 }

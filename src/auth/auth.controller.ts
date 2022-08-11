@@ -35,4 +35,13 @@ export class AuthController {
         return await this.authService.logout(user, res);
     }
 
+    @Get('/check')
+    @UseGuards(AuthGuard)
+    @UseFilters(new UnauthorizedExceptionFilter())
+    checkIsLoggedIn() {
+        return {
+            actionStatus: true,
+            message: 'ok'
+        }
+    }
 }

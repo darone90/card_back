@@ -1,23 +1,15 @@
 import { ArticleEntity } from "src/user/article.entity";
 
-interface ArticleResponse {
-    section: Sections;
-    title: string;
-    text: string;
-    fotos: string[];
-    date: string;
-}
-
 export interface Code {
     coded: string;
     iv: string
 }
 
 export enum Sections {
-    'programming',
-    'automation',
-    'welding',
-    'glass'
+    programming = 'programming',
+    automation = 'automation',
+    welding = 'welding',
+    glass = 'glass'
 }
 
 export interface DecodedToken {
@@ -28,5 +20,5 @@ export interface DecodedToken {
 
 export interface StandardResponse {
     actionStatus: boolean;
-    message: string | ArticleResponse;
+    message: string | ArticleEntity | ArticleEntity[];
 }

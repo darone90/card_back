@@ -6,9 +6,16 @@ export const checkFreeSpace = async (): Promise<number> => {
         select: ["size"]
     });
 
-    const values = data.map(entity => entity.size);
+    if (data.length > 0) {
 
-    const allTakenSpace = values.reduce((prev, curr) => prev + curr);
+        const values = data.map(entity => entity.size);
 
-    return allTakenSpace;
+        const allTakenSpace = values.reduce((prev, curr) => prev + curr);
+
+        return allTakenSpace;
+
+    };
+
+    return 0;
+
 };
