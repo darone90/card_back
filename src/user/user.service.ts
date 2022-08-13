@@ -133,7 +133,7 @@ export class UserService {
     async getArticleList(): Promise<StandardResponse> {
         try {
             const result = await ArticleEntity.find({
-                select: ['title', 'date', 'id', 'section'],
+                select: ['title', 'date', 'id', 'section', 'text'],
                 relations: {
                     fotos: true,
                 }
