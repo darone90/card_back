@@ -1,5 +1,4 @@
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Sections } from "src/types/user.type";
 import { ArticleEntity } from "./article.entity";
 
 @Entity()

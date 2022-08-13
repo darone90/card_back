@@ -6,6 +6,7 @@ import { AuthGuard } from 'src/guard/Auth.guard';
 import { UserEntity } from 'src/user/user.entity';
 import { AuthService } from './auth.service';
 import { authLoginDto } from './dto/auth-login.dto';
+import { PasswordChange } from './dto/pass-change.dto';
 
 @Controller('login')
 export class AuthController {
@@ -23,8 +24,11 @@ export class AuthController {
     @Patch('/')
     @UseGuards(AuthGuard)
     @UseFilters(new UnauthorizedExceptionFilter())
-    async PasswordChange() {
-
+    async PasswordChange(
+        @UserObject() user: UserEntity,
+        @Body() body: PasswordChange,
+    ) {
+        return await this.authService.passwordChange(user, body);
     };
 
     @Get('/')
@@ -43,5 +47,19 @@ export class AuthController {
             actionStatus: true,
             message: 'ok'
         }
-    }
-}
+    };
+
+    @Get('/error')
+    @UseGuards(AuthGuard)
+    @UseFilters(new UnauthorizedExceptionFilter())
+    async getErrorLog() {
+        return this.authService.getErrorLog();
+    };
+
+    @Get('/deleteerror')
+    @UseGuards(AuthGuard)
+    @UseFilters(new UnauthorizedExceptionFilter())
+    async deleteErrorLog() {
+        return await this.authService.clearErrorLog();
+    };
+};

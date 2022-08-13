@@ -1,3 +1,4 @@
+import { ErrorEntity } from "src/error/error.entity";
 import { ArticleEntity } from "src/user/article.entity";
 
 export interface Code {
@@ -20,5 +21,5 @@ export interface DecodedToken {
 
 export interface StandardResponse {
     actionStatus: boolean;
-    message: string | ArticleEntity | ArticleEntity[];
+    message: string | ArticleEntity | ArticleEntity[] | ErrorEntity[];
 }

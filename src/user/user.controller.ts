@@ -42,7 +42,7 @@ export class UserController {
 
     @Get('/getone/:id')
     async getOneArtice(
-        @Param() id: string
+        @Param('id') id: string
     ) {
         return await this.userService.getOneArticle(id);
     };

@@ -5,6 +5,7 @@ import { serverDataConf } from 'server.config';
 import { destionation } from 'src/multer/multer.storage';
 import { UploadeFileMulter } from 'src/types/multer.type';
 import { Sections, StandardResponse } from 'src/types/user.type';
+import { addErrorToBase } from 'src/utils/error-handler';
 import { checkFreeSpace } from 'src/utils/free-space-counter';
 import { ArticleEntity } from './article.entity';
 import { ArticleData } from './dto/article.dto';
@@ -42,7 +43,7 @@ export class UserService {
                 message: 'Artykuł został dodany'
             }
         } catch (err) {
-            console.log(err);
+            addErrorToBase(err as Error);
             await Promise.all(file.file.map(async (foto) => {
                 await unlink(path.join(destionation(), foto.filename))
             }));
@@ -80,7 +81,7 @@ export class UserService {
                 message: result
             }
         } catch (err) {
-            console.log(err)
+            addErrorToBase(err as Error);
             return {
                 actionStatus: false,
                 message: 'Błąd podczas pobierania artykułu'
@@ -121,7 +122,7 @@ export class UserService {
                 message: 'Artykuł został usunięty'
             };
         } catch (err) {
-            console.log(err)
+            addErrorToBase(err as Error);
             return {
                 actionStatus: false,
                 message: 'Błąd serwera'
@@ -151,7 +152,7 @@ export class UserService {
             }
 
         } catch (err) {
-            console.log(err);
+            addErrorToBase(err as Error);
             return {
                 actionStatus: false,
                 message: 'Błąd serwera'
@@ -204,7 +205,7 @@ export class UserService {
                 message: 'Dane zostały wprowadzone'
             }
         } catch (err) {
-            console.log(err);
+            addErrorToBase(err as Error);
             return {
                 actionStatus: false,
                 message: 'Błąd serwera'
@@ -233,7 +234,7 @@ export class UserService {
                 }
             );
         } catch (err) {
-            console.log(err)
+            addErrorToBase(err as Error);
         };
     };
 
@@ -263,7 +264,7 @@ export class UserService {
                 message: 'Zdjęcie usunięte'
             };
         } catch (err) {
-            console.log(err)
+            addErrorToBase(err as Error);
             return {
                 actionStatus: false,
                 message: 'Błąd serwera'
@@ -315,7 +316,7 @@ export class UserService {
                 message: 'Zdjęcie zostało dodane'
             };
         } catch (err) {
-            console.log(err)
+            addErrorToBase(err as Error);
             return {
                 actionStatus: false,
                 message: 'Błąd serwera'
