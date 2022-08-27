@@ -1,73 +1,135 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# My visit card service: Back-end
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Purpose
 
-## Description
+This application was made to handle request from front-end service part. Main tasks of this program are connection between front and database, data validation and admin login procedure. Program enables uploading and storing photos, and automatically preparing small size photos version for faster sending to front.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Map of application
 
-## Installation
+Endpoints for User module
 
-```bash
-$ npm install
+```mermaid
+
+graph LR
+
+A[POST user/addarticle] -- path protected: only admin --> B[data validation, file uploading] -- resizing photo --> T[Photos Store]
+
+B --> U[Database]
+
+C[GET user/getone/:id] -- sending id --> D[database]
+
+D -- find photos --> X[Photos store] -- sending article--> W[Client Response]
+
+E[GET user/delete/:id] -- path protected: only admin  --> Z[database] -- deleting data --> V[Photos store]
+
+G[GET user/foto/remove/:id] -- path protected: only admin --> H[Photos store]
+
+I[PATCH user/article/patch] -- path protected: only admin --> J[Database]
+
+K[POST user/foto/add] -- path protected: only admin --> L[Photos store]
+
+M[GET user/sendfoto/:id/:type] -- checking type and id --> N[Photos store] --> Y[Client response]
+
+O[GET user/list] --> P(Database) --> Y
+
+R[GET user/freespace]  --> P
+
 ```
 
-## Running the app
+Endpoints for Auth module
 
-```bash
-# development
-$ npm run start
+```mermaid
 
-# watch mode
-$ npm run start:dev
+graph LR
 
-# production mode
-$ npm run start:prod
+A[Post: login] -- validation --> B(Database) --> C[logged in] --> E
+
+B --> D[incorrect data] --> E[Client response]
+
+F[Patch: login] -- validation --> G[Password change] --> H[database]
+
+I[Get: login] -- login out --> H
+
+J[GET: login/check] -- decode jwt --> K[database] --> L[logged in] --> M[Client response]
+
+K --> N[not logged in] --> M
+
+O[GET: login/error] --> P[database] --get error log--> R[Client response]
+
+S[GET: login/deleteerror] --> T[database] --clear error log--> R
+
 ```
 
-## Test
+## How it`s work ?
 
-```bash
-# unit tests
-$ npm run test
+Application is connected to SQL MariaDB database. All request and response from database are handled by typeorm. Login procedure is using json web token written in browser as http only cookie. admin password in database is hashed and coded with iv key and salt. Program let to login only on one device. After login admin have access to content manage panel and he can use protected endpoints paths. It is possible to upload 6 photos to each article. Every photo is automatically resize and convert to format .webp. All articles can be edited, photos can be attached, remove or download. Admin also have access to error log. Application save all error appeared. All added articles are visible for visitors.
 
-# e2e tests
-$ npm run test:e2e
+## Technologies stack
 
-# test coverage
-$ npm run test:cov
-```
+This App is build with Nest.js framework and written in TypeScript.
 
-## Support
+Additional modules:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- bcrypt
 
-## Stay in touch
+- rxjs
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- sharp
 
-## License
+- passport
 
-Nest is [MIT licensed](LICENSE).
+- passport-jwt
+
+- cookie parser
+
+- mysql2
+
+## How to start ?
+
+Before starting the application, after repository cloning, you need to install node modules. To do that you some node package manager will be required. If you use npm tap on console:
+
+- npm install
+
+After package installing you need to change access database data for your own in ormConfig.ts
+Also you can change safety data in cryptoConfig.ts:
+
+    - password
+    > string of characters used to code the data, should be long
+    - algorithm
+    > coding algorithm, for example 'aes-192-cbc'
+    - iterations: 
+    > coding iteration number 
+
+To start developer server you need install globally nest.js:
+
+- npm install -g @nestjs/cli
+
+Starting developer server in watch mode:
+
+- nest start --watch
+
+Building production app:
+
+- nest build
+
+
+### Very important!
+
+Before you build production version remember to change entities in ormConfig.ts
+
+develop version
+
+- entities: ['dist/**/**.entity{.ts,.js}']
+
+production version
+
+- entities: ['**/**.entity{.ts,.js}']
+
+## Contact
+
+If you want to reach me use my email number: pileckidariusz90@gmail.com
+
+## Copyrights
+
+All code in this repository is free to use for everyone
