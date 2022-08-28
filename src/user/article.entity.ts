@@ -14,7 +14,9 @@ export class ArticleEntity extends BaseEntity {
     @Column()
     title: string;
 
-    @Column()
+    @Column({
+        type: 'longtext'
+    })
     text: string;
 
     @OneToMany(() => FotoEntity, (foto) => foto.article)

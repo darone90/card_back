@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { databaseConfig } from 'ormConfig';
@@ -10,7 +12,11 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     TypeOrmModule.forRoot(databaseConfig as TypeOrmModule),
     UserModule,
-    AuthModule
+    AuthModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, 'static'),
+      exclude: ['/api*']
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
