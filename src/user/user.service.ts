@@ -10,6 +10,7 @@ import { checkFreeSpace } from 'src/utils/free-space-counter';
 import { ArticleEntity } from './article.entity';
 import { ArticleData } from './dto/article.dto';
 import { FotoEntity } from './foto.entity';
+import { VisitationEntity } from './visitation.entity';
 
 @Injectable()
 export class UserService {
@@ -136,8 +137,14 @@ export class UserService {
                 select: ['title', 'date', 'id', 'section', 'text'],
                 relations: {
                     fotos: true,
+                },
+                order: {
+                    date: "DESC"
                 }
             });
+
+            const visitor = new VisitationEntity();
+            await visitor.save();
 
             if (!result) {
                 return {
@@ -156,6 +163,39 @@ export class UserService {
             return {
                 actionStatus: false,
                 message: 'Błąd serwera'
+            };
+        };
+    };
+
+    async getVisitors(): Promise<StandardResponse> {
+        try {
+            const count = await VisitationEntity.count();
+            return {
+                actionStatus: true,
+                message: `${count}`
+            };
+        }  catch (err) {
+            console.log(err);
+            return {
+                actionStatus: false,
+                message: `Błąd serwera`
+            };
+        };
+
+    };
+
+    async clearVisitorsCounter(): Promise<StandardResponse> {
+        try {
+            await VisitationEntity.clear();
+            return {
+                actionStatus: true,
+                message: `Counter Clean`
+            };
+        }  catch (err) {
+            console.log(err);
+            return {
+                actionStatus: false,
+                message: `Błąd serwera`
             };
         };
     };
@@ -236,6 +276,20 @@ export class UserService {
         } catch (err) {
             addErrorToBase(err as Error);
         };
+    };
+
+    async sendResume(res: any, lang: string) {
+        try {
+            const name = lang === "EN" ? '1213.pdf' : '1213.pdf';
+
+            res.sendFile(name, {
+                root: path.join(__dirname, '../../documents')
+            })
+
+        } catch (err) {
+            addErrorToBase(err as Error);
+        };
+        
     };
 
     async fotoRemove(id: string): Promise<StandardResponse> {

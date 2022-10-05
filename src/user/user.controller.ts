@@ -54,6 +54,20 @@ export class UserController {
         return await this.userService.getFreeSpace();
     }
 
+    @Get('/visitors')
+    @UseGuards(AuthGuard)
+    @UseFilters(new UnauthorizedExceptionFilter())
+    async sendVisitorNumber() {
+        return await this.userService.getVisitors();
+    }
+
+    @Get('/visitors/clear')
+    @UseGuards(AuthGuard)
+    @UseFilters(new UnauthorizedExceptionFilter())
+    async clearVisitorNumber() {
+        return await this.userService.clearVisitorsCounter();
+    }
+
     @Get('/delete/:id')
     @UseGuards(AuthGuard)
     @UseFilters(new UnauthorizedExceptionFilter())
@@ -117,5 +131,14 @@ export class UserController {
     ) {
         return await this.userService.sendFoto(res, id, type);
     }
+
+    @Get('/downloadCV/:lang')
+    async sendResumeToClient(
+        @Param('lang') lang: string,
+        @Res() res: any
+    ) {
+        return await this.userService.sendResume(res, lang);
+    };
+
 
 }
